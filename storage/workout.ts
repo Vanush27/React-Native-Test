@@ -19,7 +19,6 @@ export const initWorkouts = async (): Promise<boolean> => {
     await storeData("workout-data", data);
     return true;
   }
-
   return false;
 };
 
