@@ -5,7 +5,6 @@ import HomeScreen from "../screens/HomeScreen";
 import PlanerScreen from "../screens/PlannerScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { Text } from "react-native";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import WorkoutDetailScreen from "../screens/WorkoutDetailScreen";
 
@@ -40,6 +39,7 @@ const BottomTab = createBottomTabNavigator();
 function BottomTabNavigator() {
   return (
     <BottomTab.Navigator initialRouteName="Home">
+
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}

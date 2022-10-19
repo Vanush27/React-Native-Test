@@ -1,6 +1,8 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { Workout } from "../types/data";
 import { formatSec } from "../utils/time";
+import React from "react";
+
 export default function WorkoutItem({
   item,
   children,

@@ -1,17 +1,22 @@
-import { useEffect } from "react";
-import { View, Text, Button } from "react-native";
-import { NativeStackHeaderProps } from "@react-navigation/native-stack";
+import {StyleSheet, View} from "react-native";
+import {NativeStackHeaderProps} from "@react-navigation/native-stack";
+import WorkoutForm, {ExerciseForm} from "../components/WorkoutForm";
 
-export default function PlanerScreen({ navigation }: NativeStackHeaderProps) {
-  useEffect(() => {
-    console.log("Rendering Planner screen");
-    return () => console.log("unmounting Planner  ");
-  }, []);
+export default function PlanerScreen({navigation}: NativeStackHeaderProps) {
 
-  return (
-    <View>
-      <Text> I am planer screen </Text>
-      <Button title="Go to Home" onPress={() => navigation.navigate("Home")} />
-    </View>
-  );
+    const handleFormSubmit = (form: ExerciseForm) => {
+
+    }
+    return (
+        <View style={styles.container}>
+            <WorkoutForm onSubmit={handleFormSubmit}/>
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+});

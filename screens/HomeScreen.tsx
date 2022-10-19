@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, FlatList, Pressable } from "react-native";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
-import WorkutItem from "../components/WorkoutItem";
+import WorkoutItem from "../components/WorkoutItem";
 import { useWorkouts } from "../hooks/useWorkouts";
 
 export default function HomeScreen({ navigation }: NativeStackHeaderProps) {
@@ -18,7 +18,7 @@ export default function HomeScreen({ navigation }: NativeStackHeaderProps) {
                 navigation.navigate("WorkoutDetail", { slug: item.slug })
               }
             >
-              <WorkutItem item={item} />
+              <WorkoutItem item={item} />
             </Pressable>
           );
         }}
