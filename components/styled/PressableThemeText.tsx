@@ -1,4 +1,4 @@
-import {Text, useColorScheme} from "react-native";
+import {useColorScheme} from "react-native";
 import {PressableText, PressableTextProps} from "./PressableText";
 
 export function PressableThemeText(props: PressableTextProps) {
