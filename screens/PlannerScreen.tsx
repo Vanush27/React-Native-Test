@@ -1,15 +1,107 @@
-import {StyleSheet, View} from "react-native";
+import {FlatList, StyleSheet, Text, View} from "react-native";
 import {NativeStackHeaderProps} from "@react-navigation/native-stack";
-import WorkoutForm, {ExerciseForm} from "../components/WorkoutForm";
+import {ExerciseFormData} from "../components/ExerciseForm";
+import {SequenceItem, SequenceType, Workout} from "../types/data";
+import ExerciseForm from "../components/ExerciseForm";
+import slugify from "slugify";
+import {useState} from "react";
+import ExerciseItem from "../components/ExerciseItem";
+import {PressableText} from "../components/styled/PressableText";
+import {Modal} from "../components/styled/Modal";
+import WorkoutForm, {WorkoutFormData} from "../components/WorkoutForm";
+import {storeWorkout} from "../storage/workout";
+import {PressableThemeText} from "../components/styled/PressableThemeText";
 
 export default function PlanerScreen({navigation}: NativeStackHeaderProps) {
 
-    const handleFormSubmit = (form: ExerciseForm) => {
+    const [seqItems, setSeqItems] = useState<SequenceItem[]>([]);
+
+    const handleExerciseSubmit = (form: ExerciseFormData) => {
+        const sequenceItem: SequenceItem = {
+            slug: slugify(form.name + " " + Date.now(), {lower: true}),
+            name: form.name,
+            type: form.type as SequenceType,
+            duration: Number(form.duration)
+        };
+
+        if (form.reps) {
+            sequenceItem.reps = Number(form.reps)
+        }
+
+        setSeqItems([...seqItems, sequenceItem]);
+    }
+
+    const computeDiff = (exercisesCount: number, workoutDuration: number) => {
+        const intensity = workoutDuration / exercisesCount;
+
+        if (intensity <= 60) {
+            return "hard";
+        } else if (intensity <= 100) {
+            return "normal";
+        } else {
+            return "easy";
+        }
 
     }
+    const handleWorkoutSubmit = async (form: WorkoutFormData) => {
+
+        if (seqItems.length > 0) {
+            const duration = seqItems.reduce((acc, item) => {
+                return acc + item.duration;
+            }, 0);
+
+            const workout: Workout = {
+                name: form.name,
+                slug: slugify(form.name + " " + Date.now(), {lower: true}),
+                difficulty: computeDiff(seqItems.length, duration),
+                sequence: [...seqItems],
+                duration
+            }
+            await storeWorkout(workout);
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <WorkoutForm onSubmit={handleFormSubmit}/>
+            <FlatList
+                data={seqItems}
+                renderItem={({item, index}) =>
+                    <ExerciseItem item={item}>
+                        <PressableText
+                            text="Remove"
+                            onPressIn={() => {
+                                const items = [...seqItems];
+                                items.slice(index, 1);
+                                setSeqItems(items);
+
+                            }
+                            }/>
+                    </ExerciseItem>
+                }
+                keyExtractor={item => item.slug}/>
+
+            <ExerciseForm onSubmit={handleExerciseSubmit}/>
+            <View>
+                <Modal activator={({handleOpen}) =>
+                    <PressableThemeText
+                        style={{marginTop:15}}
+                        text="Create Workout"
+                        onPress={handleOpen}/>}>
+
+                    {({handleClose}) =>
+                        <View>
+                            <WorkoutForm
+                                onSubmit={async (data) => {
+                                    await handleWorkoutSubmit(data)
+                                    handleClose();
+                                    navigation.navigate("Home");
+                                }}
+                            />
+                        </View>
+                    }
+
+                </Modal>
+            </View>
         </View>
     );
 }
